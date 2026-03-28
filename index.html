@@ -24,11 +24,11 @@
         </div>
 
         <nav>
-          <a class="nav-link nav-link--active" href="#calendarSection" data-nav-target="calendar" aria-current="page">
+          <a class="nav-link" href="#calendarSection" data-nav-target="calendar">
             <span class="nav-link__icon">📅</span>
             My Calendar
           </a>
-          <a class="nav-link" href="#attendanceSection" data-nav-target="attendance">
+          <a class="nav-link nav-link--active" href="#attendanceSection" data-nav-target="attendance" aria-current="page">
             <span class="nav-link__icon">📘</span>
             My classes
           </a>
@@ -65,6 +65,33 @@
             </div>
             <div id="calendarGrid" class="calendar-grid" aria-live="polite"></div>
             <p class="calendar-help">Blue dates indicate scheduled classes for this folio.</p>
+
+            <form id="classForm" class="class-form">
+              <h3>Add class</h3>
+              <div class="class-form-grid">
+                <label>
+                  Class date
+                  <input type="date" id="newClassDate" name="newClassDate" required />
+                </label>
+                <label>
+                  Start time
+                  <input type="time" id="newClassStart" name="newClassStart" value="09:00" required />
+                </label>
+                <label>
+                  End time
+                  <input type="time" id="newClassEnd" name="newClassEnd" value="13:00" required />
+                </label>
+                <label>
+                  Teacher
+                  <input type="text" id="newClassTeacher" name="newClassTeacher" placeholder="Teacher name" required />
+                </label>
+                <label class="full-width">
+                  Students (comma-separated)
+                  <textarea id="newClassStudents" name="newClassStudents" rows="2" placeholder="Ana Martínez, Luis García" required></textarea>
+                </label>
+              </div>
+              <button type="submit" class="primary-btn">Create class</button>
+            </form>
           </section>
 
           <section id="attendanceSection" class="panel panel--active" aria-label="Attendance panel">
@@ -75,6 +102,7 @@
                     <th><input type="checkbox" aria-label="Select all rows" /></th>
                     <th>ID</th>
                     <th>Class date</th>
+                    <th>Teacher</th>
                     <th>Start time</th>
                     <th>End time</th>
                     <th>Attendance</th>
@@ -85,8 +113,7 @@
 
               <footer class="table-footer">
                 <div class="rows-select">Rows per page: 10 ▾</div>
-                <div class="pagination">1–8 of 8</div>
-                <div class="page-buttons" aria-label="Pagination controls">‹ ›</div>
+                <div class="pagination" id="paginationText"></div>
               </footer>
             </div>
 
@@ -100,6 +127,7 @@
                   <small id="selectedClassTime"></small>
                 </div>
                 <ul id="studentList" class="student-list"></ul>
+                <button id="submitAttendanceBtn" type="button" class="primary-btn">Submit attendance</button>
               </div>
             </aside>
           </section>

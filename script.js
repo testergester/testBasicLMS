@@ -1,121 +1,38 @@
-const attendanceData = [
+const STORAGE_KEY = 'basicLmsClassesV1';
+
+const defaultClassData = [
   {
     id: 19499,
     classDate: '2026-03-07',
-    displayDate: 'March 7, 2026',
-    start: '9:00 AM',
-    end: '1:00 PM',
-    status: 'registered',
+    start: '09:00',
+    end: '13:00',
+    teacher: 'Mouad Amrani',
+    status: 'pending',
     students: [
       { id: 1, name: 'Ana Martínez', attendance: 'present' },
       { id: 2, name: 'Luis García', attendance: 'absent' },
-      { id: 3, name: 'Sara Khan', attendance: 'present' },
-      { id: 4, name: 'Daniel Reed', attendance: 'present' }
+      { id: 3, name: 'Sara Khan', attendance: 'present' }
     ]
   },
   {
     id: 19500,
     classDate: '2026-03-14',
-    displayDate: 'March 14, 2026',
-    start: '9:00 AM',
-    end: '1:00 PM',
-    status: 'registered',
-    students: [
-      { id: 1, name: 'Ana Martínez', attendance: 'present' },
-      { id: 2, name: 'Luis García', attendance: 'present' },
-      { id: 3, name: 'Sara Khan', attendance: 'present' },
-      { id: 4, name: 'Daniel Reed', attendance: 'absent' }
-    ]
-  },
-  {
-    id: 19501,
-    classDate: '2026-03-21',
-    displayDate: 'March 21, 2026',
-    start: '9:00 AM',
-    end: '1:00 PM',
-    status: 'registered',
-    students: [
-      { id: 1, name: 'Ana Martínez', attendance: 'absent' },
-      { id: 2, name: 'Luis García', attendance: 'present' },
-      { id: 3, name: 'Sara Khan', attendance: 'present' },
-      { id: 4, name: 'Daniel Reed', attendance: 'present' }
-    ]
-  },
-  {
-    id: 19502,
-    classDate: '2026-03-28',
-    displayDate: 'March 28, 2026',
-    start: '9:00 AM',
-    end: '1:00 PM',
-    status: 'registered',
-    students: [
-      { id: 1, name: 'Ana Martínez', attendance: 'present' },
-      { id: 2, name: 'Luis García', attendance: 'present' },
-      { id: 3, name: 'Sara Khan', attendance: 'present' },
-      { id: 4, name: 'Daniel Reed', attendance: 'present' }
-    ]
-  },
-  {
-    id: 19503,
-    classDate: '2026-04-11',
-    displayDate: 'April 11, 2026',
-    start: '9:00 AM',
-    end: '1:00 PM',
-    status: 'pending',
-    students: [
-      { id: 1, name: 'Ana Martínez', attendance: 'present' },
-      { id: 2, name: 'Luis García', attendance: 'absent' },
-      { id: 3, name: 'Sara Khan', attendance: 'absent' },
-      { id: 4, name: 'Daniel Reed', attendance: 'present' }
-    ]
-  },
-  {
-    id: 19504,
-    classDate: '2026-04-18',
-    displayDate: 'April 18, 2026',
-    start: '9:00 AM',
-    end: '1:00 PM',
+    start: '09:00',
+    end: '13:00',
+    teacher: 'Mouad Amrani',
     status: 'pending',
     students: [
       { id: 1, name: 'Ana Martínez', attendance: 'present' },
       { id: 2, name: 'Luis García', attendance: 'present' },
-      { id: 3, name: 'Sara Khan', attendance: 'absent' },
-      { id: 4, name: 'Daniel Reed', attendance: 'present' }
-    ]
-  },
-  {
-    id: 19505,
-    classDate: '2026-04-25',
-    displayDate: 'April 25, 2026',
-    start: '9:00 AM',
-    end: '1:00 PM',
-    status: 'pending',
-    students: [
-      { id: 1, name: 'Ana Martínez', attendance: 'absent' },
-      { id: 2, name: 'Luis García', attendance: 'present' },
-      { id: 3, name: 'Sara Khan', attendance: 'present' },
-      { id: 4, name: 'Daniel Reed', attendance: 'absent' }
-    ]
-  },
-  {
-    id: 19506,
-    classDate: '2026-05-02',
-    displayDate: 'May 2, 2026',
-    start: '9:00 AM',
-    end: '1:00 PM',
-    status: 'pending',
-    students: [
-      { id: 1, name: 'Ana Martínez', attendance: 'present' },
-      { id: 2, name: 'Luis García', attendance: 'present' },
-      { id: 3, name: 'Sara Khan', attendance: 'absent' },
-      { id: 4, name: 'Daniel Reed', attendance: 'present' }
+      { id: 3, name: 'Sara Khan', attendance: 'absent' }
     ]
   }
 ];
 
 const state = {
   selectedClassId: null,
-  activeView: 'attendance'
+  activeView: 'attendance',
+  classes: loadClasses()
 };
 
 const attendanceRows = document.getElementById('attendanceRows');
@@ -124,44 +41,110 @@ const detailsContent = document.getElementById('detailsContent');
 const selectedClassTitle = document.getElementById('selectedClassTitle');
 const selectedClassTime = document.getElementById('selectedClassTime');
 const studentList = document.getElementById('studentList');
+const submitAttendanceBtn = document.getElementById('submitAttendanceBtn');
 const monthPicker = document.getElementById('monthPicker');
 const calendarGrid = document.getElementById('calendarGrid');
 const tabs = document.querySelectorAll('[data-tab]');
 const navLinks = document.querySelectorAll('[data-nav-target]');
+const classForm = document.getElementById('classForm');
+const paginationText = document.getElementById('paginationText');
+
+function loadClasses() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (!raw) {
+    return structuredClone(defaultClassData);
+  }
+
+  try {
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) {
+      return structuredClone(defaultClassData);
+    }
+
+    return parsed;
+  } catch {
+    return structuredClone(defaultClassData);
+  }
+}
+
+function saveClasses() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state.classes));
+}
+
+function formatDateDisplay(dateIso) {
+  const date = new Date(`${dateIso}T00:00:00`);
+  return date.toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric'
+  });
+}
+
+function formatTimeDisplay(time24) {
+  const [hours, minutes] = time24.split(':').map(Number);
+  const meridiem = hours >= 12 ? 'PM' : 'AM';
+  const normalizedHour = hours % 12 || 12;
+  return `${normalizedHour}:${String(minutes).padStart(2, '0')} ${meridiem}`;
+}
+
+function getClassById(classId) {
+  return state.classes.find((item) => item.id === classId);
+}
 
 function renderAttendanceRows() {
   attendanceRows.innerHTML = '';
 
-  attendanceData.forEach((row) => {
-    const tr = document.createElement('tr');
-    const statusLabel = row.status === 'registered' ? 'Registered' : 'Pending';
+  state.classes
+    .sort((a, b) => (a.classDate > b.classDate ? 1 : -1))
+    .forEach((row) => {
+      const tr = document.createElement('tr');
+      const statusLabel = row.status === 'registered' ? 'Registered' : 'Pending';
 
-    tr.dataset.classId = String(row.id);
-    tr.innerHTML = `
-      <td><input type="checkbox" aria-label="Select class ${row.id}" /></td>
-      <td>${row.id}</td>
-      <td>${row.displayDate}</td>
-      <td>${row.start}</td>
-      <td>${row.end}</td>
-      <td><span class="badge badge--${row.status}">${statusLabel}</span></td>
-    `;
+      tr.dataset.classId = String(row.id);
+      tr.innerHTML = `
+        <td><input type="checkbox" aria-label="Select class ${row.id}" /></td>
+        <td>${row.id}</td>
+        <td>${formatDateDisplay(row.classDate)}</td>
+        <td>${row.teacher}</td>
+        <td>${formatTimeDisplay(row.start)}</td>
+        <td>${formatTimeDisplay(row.end)}</td>
+        <td><span class="badge badge--${row.status}">${statusLabel}</span></td>
+      `;
 
-    tr.addEventListener('click', (event) => {
-      if (event.target.tagName.toLowerCase() === 'input') {
-        return;
+      tr.addEventListener('click', (event) => {
+        if (event.target.tagName.toLowerCase() === 'input') {
+          return;
+        }
+
+        state.selectedClassId = row.id;
+        renderAttendanceRows();
+        renderClassDetails();
+      });
+
+      if (state.selectedClassId === row.id) {
+        tr.classList.add('row--active');
       }
 
-      state.selectedClassId = row.id;
-      renderAttendanceRows();
-      renderClassDetails();
+      attendanceRows.appendChild(tr);
     });
 
-    if (state.selectedClassId === row.id) {
-      tr.classList.add('row--active');
-    }
+  paginationText.textContent = `1-${state.classes.length} of ${state.classes.length}`;
+}
 
-    attendanceRows.appendChild(tr);
-  });
+function setStudentStatus(classId, studentId, status) {
+  const classInfo = getClassById(classId);
+  if (!classInfo) {
+    return;
+  }
+
+  const student = classInfo.students.find((item) => item.id === studentId);
+  if (!student) {
+    return;
+  }
+
+  student.attendance = status;
+  classInfo.status = 'pending';
+  saveClasses();
 }
 
 function renderClassDetails() {
@@ -171,15 +154,15 @@ function renderClassDetails() {
     return;
   }
 
-  const classInfo = attendanceData.find((item) => item.id === state.selectedClassId);
+  const classInfo = getClassById(state.selectedClassId);
   if (!classInfo) {
     return;
   }
 
   detailsPlaceholder.classList.add('hidden');
   detailsContent.classList.remove('hidden');
-  selectedClassTitle.textContent = `Class #${classInfo.id} • ${classInfo.displayDate}`;
-  selectedClassTime.textContent = `${classInfo.start} to ${classInfo.end}`;
+  selectedClassTitle.textContent = `Class #${classInfo.id} • ${formatDateDisplay(classInfo.classDate)}`;
+  selectedClassTime.textContent = `${formatTimeDisplay(classInfo.start)} to ${formatTimeDisplay(classInfo.end)} • ${classInfo.teacher}`;
 
   studentList.innerHTML = '';
   classInfo.students.forEach((student) => {
@@ -200,16 +183,24 @@ function renderClassDetails() {
     absentBtn.type = 'button';
     absentBtn.textContent = 'Absent';
 
-    const setStudentStatus = (status) => {
-      student.attendance = status;
-      presentBtn.classList.toggle('active-present', status === 'present');
-      absentBtn.classList.toggle('active-absent', status === 'absent');
+    const setButtonStyles = () => {
+      presentBtn.classList.toggle('active-present', student.attendance === 'present');
+      absentBtn.classList.toggle('active-absent', student.attendance === 'absent');
     };
 
-    presentBtn.addEventListener('click', () => setStudentStatus('present'));
-    absentBtn.addEventListener('click', () => setStudentStatus('absent'));
+    presentBtn.addEventListener('click', () => {
+      setStudentStatus(classInfo.id, student.id, 'present');
+      setButtonStyles();
+      renderAttendanceRows();
+    });
 
-    setStudentStatus(student.attendance);
+    absentBtn.addEventListener('click', () => {
+      setStudentStatus(classInfo.id, student.id, 'absent');
+      setButtonStyles();
+      renderAttendanceRows();
+    });
+
+    setButtonStyles();
 
     controls.append(presentBtn, absentBtn);
     item.append(name, controls);
@@ -243,7 +234,7 @@ function renderCalendar(targetDate) {
 
   for (let date = 1; date <= daysInMonth; date += 1) {
     const dateIso = `${year}-${String(month + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
-    const matchingClass = attendanceData.find((item) => item.classDate === dateIso);
+    const matchingClass = state.classes.find((item) => item.classDate === dateIso);
 
     const cell = document.createElement('div');
     cell.className = 'calendar-cell';
@@ -294,6 +285,68 @@ function switchView(view) {
   });
 }
 
+function createClassFromForm(event) {
+  event.preventDefault();
+
+  const formData = new FormData(classForm);
+  const classDate = formData.get('newClassDate') || document.getElementById('newClassDate').value;
+  const start = formData.get('newClassStart') || document.getElementById('newClassStart').value;
+  const end = formData.get('newClassEnd') || document.getElementById('newClassEnd').value;
+  const teacher = (formData.get('newClassTeacher') || document.getElementById('newClassTeacher').value).toString().trim();
+  const studentsRaw = (formData.get('newClassStudents') || document.getElementById('newClassStudents').value).toString();
+
+  const students = studentsRaw
+    .split(',')
+    .map((name) => name.trim())
+    .filter(Boolean)
+    .map((name, index) => ({
+      id: index + 1,
+      name,
+      attendance: 'absent'
+    }));
+
+  if (!classDate || !start || !end || !teacher || students.length === 0) {
+    return;
+  }
+
+  const nextId = state.classes.reduce((maxId, item) => Math.max(maxId, item.id), 19000) + 1;
+
+  state.classes.push({
+    id: nextId,
+    classDate,
+    start,
+    end,
+    teacher,
+    status: 'pending',
+    students
+  });
+
+  saveClasses();
+  classForm.reset();
+  document.getElementById('newClassStart').value = '09:00';
+  document.getElementById('newClassEnd').value = '13:00';
+
+  renderAttendanceRows();
+  renderCalendar(new Date(`${classDate}T00:00:00`));
+  switchView('attendance');
+}
+
+submitAttendanceBtn.addEventListener('click', () => {
+  if (!state.selectedClassId) {
+    return;
+  }
+
+  const classInfo = getClassById(state.selectedClassId);
+  if (!classInfo) {
+    return;
+  }
+
+  classInfo.status = 'registered';
+  saveClasses();
+  renderAttendanceRows();
+  renderClassDetails();
+});
+
 monthPicker.addEventListener('change', (event) => {
   const [year, month] = event.target.value.split('-').map(Number);
   if (!year || !month) {
@@ -321,6 +374,9 @@ navLinks.forEach((link) => {
   });
 });
 
+classForm.addEventListener('submit', createClassFromForm);
+
+saveClasses();
 renderAttendanceRows();
 renderClassDetails();
 renderCalendar(new Date(2026, 2, 1));
