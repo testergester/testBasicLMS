@@ -24,11 +24,11 @@
         </div>
 
         <nav>
-          <a class="nav-link" href="#" aria-label="Calendar">
+          <a class="nav-link nav-link--active" href="#calendarSection" data-nav-target="calendar" aria-current="page">
             <span class="nav-link__icon">📅</span>
             My Calendar
           </a>
-          <a class="nav-link nav-link--active" href="#" aria-current="page">
+          <a class="nav-link" href="#attendanceSection" data-nav-target="attendance">
             <span class="nav-link__icon">📘</span>
             My classes
           </a>
@@ -52,32 +52,56 @@
             </div>
 
             <div class="tabs" role="tablist" aria-label="Course tabs">
-              <button class="tab" role="tab" aria-selected="false">Course calendar</button>
-              <button class="tab tab--active" role="tab" aria-selected="true">Attendance</button>
-              <button class="tab" role="tab" aria-selected="false">Evaluations</button>
+              <button class="tab" role="tab" aria-selected="false" data-tab="calendar">Course calendar</button>
+              <button class="tab tab--active" role="tab" aria-selected="true" data-tab="attendance">Attendance</button>
+              <button class="tab" role="tab" aria-selected="false" data-tab="evaluations">Evaluations</button>
             </div>
           </section>
 
-          <section class="table-card" aria-label="Attendance table">
-            <table>
-              <thead>
-                <tr>
-                  <th><input type="checkbox" aria-label="Select all rows" /></th>
-                  <th>ID</th>
-                  <th>Class date</th>
-                  <th>Start time</th>
-                  <th>End time</th>
-                  <th>Attendance</th>
-                </tr>
-              </thead>
-              <tbody id="attendanceRows"></tbody>
-            </table>
+          <section id="calendarSection" class="panel" aria-label="Course calendar panel">
+            <div class="panel-header">
+              <h2>Course Calendar</h2>
+              <input id="monthPicker" type="month" aria-label="Pick month" />
+            </div>
+            <div id="calendarGrid" class="calendar-grid" aria-live="polite"></div>
+            <p class="calendar-help">Blue dates indicate scheduled classes for this folio.</p>
+          </section>
 
-            <footer class="table-footer">
-              <div class="rows-select">Rows per page: 10 ▾</div>
-              <div class="pagination">1–8 of 8</div>
-              <div class="page-buttons" aria-label="Pagination controls">‹ ›</div>
-            </footer>
+          <section id="attendanceSection" class="panel panel--active" aria-label="Attendance panel">
+            <div class="table-card" aria-label="Attendance table">
+              <table>
+                <thead>
+                  <tr>
+                    <th><input type="checkbox" aria-label="Select all rows" /></th>
+                    <th>ID</th>
+                    <th>Class date</th>
+                    <th>Start time</th>
+                    <th>End time</th>
+                    <th>Attendance</th>
+                  </tr>
+                </thead>
+                <tbody id="attendanceRows"></tbody>
+              </table>
+
+              <footer class="table-footer">
+                <div class="rows-select">Rows per page: 10 ▾</div>
+                <div class="pagination">1–8 of 8</div>
+                <div class="page-buttons" aria-label="Pagination controls">‹ ›</div>
+              </footer>
+            </div>
+
+            <aside id="classDetails" class="details-card" aria-live="polite">
+              <h3>Class attendance details</h3>
+              <p class="details-placeholder">Click a class row to load students and mark them Present or Absent.</p>
+
+              <div id="detailsContent" class="hidden">
+                <div class="details-meta">
+                  <p id="selectedClassTitle"></p>
+                  <small id="selectedClassTime"></small>
+                </div>
+                <ul id="studentList" class="student-list"></ul>
+              </div>
+            </aside>
           </section>
         </main>
       </div>

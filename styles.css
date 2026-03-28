@@ -5,11 +5,12 @@
   --card-bg: #ffffff;
   --line: #e4e7ec;
   --text-main: #222;
-  --text-muted: #667085;
   --success-bg: #e9f8d8;
   --success-text: #329126;
   --pending-bg: #f4f4f5;
   --pending-text: #4a4a4a;
+  --danger-bg: #ffe6e6;
+  --danger-text: #b42318;
 }
 
 * {
@@ -158,8 +159,92 @@ nav {
   border-bottom: 3px solid var(--tab-blue);
 }
 
-.table-card {
+.panel {
+  display: none;
   margin-top: 22px;
+}
+
+.panel--active {
+  display: block;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.panel-header h2 {
+  margin: 0;
+}
+
+#monthPicker {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px;
+  font: inherit;
+}
+
+.calendar-grid {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(70px, 1fr));
+  gap: 8px;
+  background: var(--card-bg);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.calendar-cell {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  min-height: 72px;
+  padding: 6px;
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.calendar-cell strong {
+  font-size: 14px;
+}
+
+.calendar-cell--muted {
+  background: #fafafa;
+  color: #9aa4b2;
+}
+
+.calendar-cell--class {
+  border-color: #91b6ff;
+  background: #edf4ff;
+}
+
+.class-dot {
+  display: inline-block;
+  width: fit-content;
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: #d9e8ff;
+  color: #1f4f99;
+  font-size: 11px;
+}
+
+.calendar-help {
+  margin: 8px 0 0;
+  color: #475467;
+  font-size: 13px;
+}
+
+#attendanceSection.panel--active {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 18px;
+}
+
+.table-card,
+.details-card {
   background: var(--card-bg);
   border: 1px solid var(--line);
   border-radius: 14px;
@@ -176,7 +261,7 @@ td {
   text-align: left;
   padding: 16px 14px;
   border-bottom: 1px solid var(--line);
-  font-size: 18px;
+  font-size: 16px;
 }
 
 th {
@@ -184,20 +269,28 @@ th {
   background: #fff;
 }
 
+tbody tr {
+  cursor: pointer;
+}
+
 tbody tr:hover {
   background: #f9fafb;
 }
 
+tbody tr.row--active {
+  background: #edf4ff;
+}
+
 input[type='checkbox'] {
-  width: 22px;
-  height: 22px;
+  width: 18px;
+  height: 18px;
 }
 
 .badge {
   display: inline-block;
   padding: 5px 10px;
   border-radius: 6px;
-  font-size: 18px;
+  font-size: 14px;
   border: 1px solid transparent;
 }
 
@@ -217,12 +310,86 @@ input[type='checkbox'] {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  gap: 36px;
+  gap: 30px;
   padding: 16px 20px;
-  font-size: 30px;
+  font-size: 15px;
 }
 
-@media (max-width: 1100px) {
+.details-card {
+  padding: 16px;
+}
+
+.details-card h3 {
+  margin-top: 0;
+}
+
+.hidden {
+  display: none;
+}
+
+.details-meta {
+  margin-bottom: 10px;
+}
+
+.details-meta p {
+  margin: 0;
+  font-weight: 600;
+}
+
+.details-meta small {
+  color: #475467;
+}
+
+.student-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.student-item {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.student-status {
+  display: inline-flex;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.student-status button {
+  border: 0;
+  padding: 6px 8px;
+  cursor: pointer;
+  background: #fff;
+  font-size: 12px;
+}
+
+.student-status button.active-present {
+  background: var(--success-bg);
+  color: var(--success-text);
+}
+
+.student-status button.active-absent {
+  background: var(--danger-bg);
+  color: var(--danger-text);
+}
+
+@media (max-width: 1250px) {
+  #attendanceSection.panel--active {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 900px) {
   .sidebar {
     width: 180px;
   }
@@ -243,7 +410,11 @@ input[type='checkbox'] {
   }
 
   .table-footer {
-    font-size: 14px;
+    font-size: 13px;
     gap: 16px;
+  }
+
+  .calendar-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
