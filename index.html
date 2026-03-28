@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Basic LMS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar" aria-label="Primary navigation">
+        <div class="brand">
+          <div class="brand__logo">ih</div>
+          <div class="brand__text">
+            <p>International House</p>
+            <small>Monterrey</small>
+          </div>
+        </div>
+
+        <nav>
+          <a class="nav-link nav-link--active" href="#calendarSection" data-nav-target="calendar" aria-current="page">
+            <span class="nav-link__icon">📅</span>
+            My Calendar
+          </a>
+          <a class="nav-link" href="#attendanceSection" data-nav-target="attendance">
+            <span class="nav-link__icon">📘</span>
+            My classes
+          </a>
+        </nav>
+      </aside>
+
+      <div class="main-shell">
+        <header class="topbar">
+          <div class="profile-pill">
+            <span class="avatar">👤</span>
+            Mouad Amrani - teacher
+          </div>
+          <button class="icon-btn" aria-label="Log out">↪</button>
+        </header>
+
+        <main class="content">
+          <section class="course-header">
+            <div class="course-title-row">
+              <button class="back-btn" aria-label="Go back">←</button>
+              <h1>Folio 18975</h1>
+            </div>
+
+            <div class="tabs" role="tablist" aria-label="Course tabs">
+              <button class="tab" role="tab" aria-selected="false" data-tab="calendar">Course calendar</button>
+              <button class="tab tab--active" role="tab" aria-selected="true" data-tab="attendance">Attendance</button>
+              <button class="tab" role="tab" aria-selected="false" data-tab="evaluations">Evaluations</button>
+            </div>
+          </section>
+
+          <section id="calendarSection" class="panel" aria-label="Course calendar panel">
+            <div class="panel-header">
+              <h2>Course Calendar</h2>
+              <input id="monthPicker" type="month" aria-label="Pick month" />
+            </div>
+            <div id="calendarGrid" class="calendar-grid" aria-live="polite"></div>
+            <p class="calendar-help">Blue dates indicate scheduled classes for this folio.</p>
+          </section>
+
+          <section id="attendanceSection" class="panel panel--active" aria-label="Attendance panel">
+            <div class="table-card" aria-label="Attendance table">
+              <table>
+                <thead>
+                  <tr>
+                    <th><input type="checkbox" aria-label="Select all rows" /></th>
+                    <th>ID</th>
+                    <th>Class date</th>
+                    <th>Start time</th>
+                    <th>End time</th>
+                    <th>Attendance</th>
+                  </tr>
+                </thead>
+                <tbody id="attendanceRows"></tbody>
+              </table>
+
+              <footer class="table-footer">
+                <div class="rows-select">Rows per page: 10 ▾</div>
+                <div class="pagination">1–8 of 8</div>
+                <div class="page-buttons" aria-label="Pagination controls">‹ ›</div>
+              </footer>
+            </div>
+
+            <aside id="classDetails" class="details-card" aria-live="polite">
+              <h3>Class attendance details</h3>
+              <p class="details-placeholder">Click a class row to load students and mark them Present or Absent.</p>
+
+              <div id="detailsContent" class="hidden">
+                <div class="details-meta">
+                  <p id="selectedClassTitle"></p>
+                  <small id="selectedClassTime"></small>
+                </div>
+                <ul id="studentList" class="student-list"></ul>
+              </div>
+            </aside>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
